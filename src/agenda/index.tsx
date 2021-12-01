@@ -45,29 +45,29 @@ export type ReservationsType = {
 };
 
 export type AgendaProps = CalendarListProps & ReservationListProps & {
-  /** the list of items that have to be displayed in agenda. If you want to render item as empty date
+    /** the list of items that have to be displayed in agenda. If you want to render item as empty date
    the value of date key has to be an empty array []. If there exists no value for date key it is
    considered that the date in question is not yet loaded */
-  items: ReservationsType;
-  /** callback that gets called when items for a certain month should be loaded (month became visible) */
-  loadItemsForMonth?: (data: any) => DateData;
-  /** callback that fires when the calendar is opened or closed */
-  onCalendarToggled?: (enabled: boolean) => void;
-  /** callback that gets called on day press */
-  onDayPress?: (data: DateData) => void;
-  /** callback that gets called when day changes while scrolling agenda list */
-  onDayChange?: (data: any) => void;
-  /** specify how agenda knob should look like */
-  renderKnob?: () => JSX.Element;
-  /** initially selected day */
-  selected: boolean, //TODO: Should be renamed 'selectedDay'
-  /** Hide knob button. Default = false */
-  hideKnob: boolean,
-  /** When `true` and `hideKnob` prop is `false`, the knob will always be visible and the user will be able to drag the knob up and close the calendar. Default = false */
-  showClosingKnob: boolean,
-  /** Replace the existing Agenda FlatList with your own component */
-  AgendaListComp?: React.VFC,
-}
+    items: ReservationsType;
+    /** callback that gets called when items for a certain month should be loaded (month became visible) */
+    loadItemsForMonth?: (data: any) => DateData;
+    /** callback that fires when the calendar is opened or closed */
+    onCalendarToggled?: (enabled: boolean) => void;
+    /** callback that gets called on day press */
+    onDayPress?: (data: DateData) => void;
+    /** callback that gets called when day changes while scrolling agenda list */
+    onDayChange?: (data: any) => void;
+    /** specify how agenda knob should look like */
+    renderKnob?: () => JSX.Element;
+    /** initially selected day */
+    selected: boolean, //TODO: Should be renamed 'selectedDay'
+    /** Hide knob button. Default = false */
+    hideKnob: boolean,
+    /** When `true` and `hideKnob` prop is `false`, the knob will always be visible and the user will be able to drag the knob up and close the calendar. Default = false */
+    showClosingKnob: boolean,
+    /** Replace the existing Agenda FlatList with your own component */
+    AgendaListComp?: React.VFC,
+  }
 
 type AgendaState = {
   scrollY: Animated.Value;
@@ -277,12 +277,14 @@ export default class Agenda extends Component<AgendaProps, AgendaState> {
   });
 
   onScrollPadLayout = () => {
-    // When user touches knob, the actual component that receives touch events is a ScrollView.
-    // It needs to be scrolled to the bottom, so that when user moves finger downwards,
-    // scroll position actually changes (it would stay at 0, when scrolled to the top).
-    this.setScrollPadPosition(this.initialScrollPadPosition(), false);
-    // delay rendering calendar in full height because otherwise it still flickers sometimes
-    setTimeout(() => this.setState({calendarIsReady: true}), 300);
+    if (!this.state.calendarIsReady) {
+      // When user touches knob, the actual component that receives touch events is a ScrollView.
+      // It needs to be scrolled to the bottom, so that when user moves finger downwards,
+      // scroll position actually changes (it would stay at 0, when scrolled to the top).
+      this.setScrollPadPosition(this.initialScrollPadPosition(), false);
+      // delay rendering calendar in full height because otherwise it still flickers sometimes
+      setTimeout(() => this.setState({calendarIsReady: true}), 200);
+    }
   };
 
   onCalendarListLayout = () => {
